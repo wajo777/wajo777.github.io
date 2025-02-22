@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visiting.io</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <h1>Thanks for Visiting!</h1>
+    <p>We appreciate your visit. Have a great day!</p>
+
+    <script>
+        fetch("http://visitorz.kesug.com/visitorz.php")
+            .then(response => console.log("Logged Visitor"))
+            .catch(error => console.error("Error:", error));
+    </script>
+</body>
+</html>
